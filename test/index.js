@@ -1,0 +1,10 @@
+require('./fragment.js');
+require('./whitespace.js');
+require('./attribute.js');
+require('./self-closing.js');
+require('./comments.js');
+require('./expression.js');
+require('./tagged.js');
+require('./unsupported.js');
+require('./component.js');
+require('./complete.js');
