@@ -7,4 +7,5 @@ require('./expression.js');
 require('./tagged.js');
 require('./unsupported.js');
 require('./component.js');
+require('./event-handlers.js');
 require('./complete.js');

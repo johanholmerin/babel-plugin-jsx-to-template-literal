@@ -12,5 +12,5 @@ test('tagged', t => {
   const input = `<div></div>`;
   const expected = 'foo`<div></div>`;';
 
-  t.equal(transform(input, 'foo'), expected);
+  t.equal(transform(input, { tag: 'foo' }), expected);
 });

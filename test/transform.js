@@ -1,11 +1,11 @@
 const babel = require('@babel/core');
 
-module.exports = function (input, tag) {
+module.exports = function (input, obj = {}) {
   const options = {
     babelrc: false,
     sourceMaps: true,
     plugins: [
-      ['./index.js', { tag }]
+      ['./index.js', obj]
     ]
   };
 

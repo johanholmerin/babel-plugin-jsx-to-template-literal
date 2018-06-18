@@ -15,5 +15,5 @@ test('complete', t => {
   `;
   const expected = 'lit`<div attr="${\'asd\'}" lorem="asd">text ads        asd<span>   text   ${\'asd\'} foo</span>${[1, 2].map(n => lit`<div>${n}</div>`)}<h1>${\'Foo\'}${\'Bar\'}</h1><input />     <input /></div>`;';
 
-  t.equal(transform(input, 'lit'), expected);
+  t.equal(transform(input, { tag: 'lit' }), expected);
 });

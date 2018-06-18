@@ -73,8 +73,23 @@ function createComponent(name, node) {
   return t.callExpression(t.identifier(name), [attributes, children]);
 }
 
+function transformListenerName(name, { lowercaseEventNames, eventNamesPrefix }) {
+  const isListener = /^on[A-Z]/.test(name);
+  if (!isListener) return name;
+
+  if (lowercaseEventNames) {
+    name = name.toLowerCase();
+  }
+
+  if (eventNamesPrefix) {
+    name = eventNamesPrefix + name.slice(2);
+  }
+
+  return name;
+}
+
 const transforms = {
-  JSXElement(node, strings, keys) {
+  JSXElement({ node, strings, keys }, opts) {
     const { name, isComponent } = getTag(node.openingElement);
 
     if (isComponent) {
@@ -91,9 +106,12 @@ const transforms = {
         throw new Error('JSXSpreadAttribute is not supported');
       }
 
-      addString(strings, keys, ` ${attr.name.name}`);
+      addString(strings, keys, ` ${
+        transformListenerName(attr.name.name, opts)
+      }`);
 
       if (attr.value) {
+
         addString(strings, keys, '="');
 
         if (attr.value.type === 'JSXExpressionContainer') {
@@ -114,7 +132,7 @@ const transforms = {
 
     // Children
     node.children.forEach(child =>
-      transforms[child.type](child, strings, keys)
+      transforms[child.type]({ node: child, strings, keys }, opts)
     );
 
     // Closing tag
@@ -124,26 +142,26 @@ const transforms = {
   JSXSpreadChild() {
     throw new Error('JSXSpreadChild is not supported');
   },
-  JSXText(node, strings, keys) {
+  JSXText({ node, strings, keys }) {
     addString(strings, keys, node.value);
   },
-  JSXExpressionContainer(node, strings, keys) {
+  JSXExpressionContainer({ node, strings, keys }) {
     // Comment
     if (node.expression.type === 'JSXEmptyExpression') return;
 
     addKey(strings, keys, node.expression);
   },
-  JSXFragment(node, strings, keys) {
+  JSXFragment({ node, strings, keys }, opts) {
     node.children.forEach(child =>
-      transforms[child.type](child, strings, keys)
+      transforms[child.type]({ node: child, strings, keys }, opts)
     );
   }
 };
 
-function transformNode(node) {
+function transformNode(node, opts) {
   const strings = [];
   const keys = [];
-  transforms[node.type](node, strings, keys);
+  transforms[node.type]({ node, strings, keys }, opts);
 
   // strings must be one longer than keys
   while (strings.length <= keys.length) {
@@ -154,7 +172,7 @@ function transformNode(node) {
 }
 
 function replaceNode(path, state) {
-  const literal = t.templateLiteral(...transformNode(path.node));
+  const literal = t.templateLiteral(...transformNode(path.node, state.opts));
   const { tag } = state.opts;
 
   path.replaceWith(

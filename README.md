@@ -23,7 +23,9 @@ html`<ul>${
 ```javascript
 "plugins": [
   ["jsx-to-template-literal", {
-    "tag": "html"
+    "tag": "html",
+    "lowercaseEventNames": true,
+    "eventNamesPrefix": "on-"
   }]
 ]
 ```
