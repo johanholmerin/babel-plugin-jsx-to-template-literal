@@ -56,3 +56,10 @@ test('component attributes mixed', t => {
 
   t.equal(transform(input), expected);
 });
+
+test('component attributes boolean', t => {
+  const input = `<Foo bar />`;
+  const expected = '`${Foo({\n  "bar": true\n}, ``)}`;';
+
+  t.equal(transform(input), expected);
+});

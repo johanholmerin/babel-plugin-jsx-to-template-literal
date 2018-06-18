@@ -14,3 +14,10 @@ test('dynamic attribute', t => {
 
   t.equal(transform(input), expected);
 });
+
+test('boolean attribute', t => {
+  const input = `<div foo></div>;`;
+  const expected = '`<div foo></div>`;';
+
+  t.equal(transform(input), expected);
+});

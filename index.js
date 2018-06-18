@@ -56,9 +56,9 @@ function createComponent(name, node) {
         return t.SpreadElement(attr.argument);
       }
 
-      const value = attr.value.type === 'JSXExpressionContainer'
-          ? attr.value.expression
-          : attr.value;
+      const value = attr.value
+        ? attr.value.expression || attr.value
+        : t.booleanLiteral(true);
 
       return t.ObjectProperty(t.stringLiteral(attr.name.name), value);
     })
@@ -91,15 +91,19 @@ const transforms = {
         throw new Error('JSXSpreadAttribute is not supported');
       }
 
-      addString(strings, keys, ` ${attr.name.name}="`);
+      addString(strings, keys, ` ${attr.name.name}`);
 
-      if (attr.value.type === 'JSXExpressionContainer') {
-        addKey(strings, keys, attr.value.expression);
-      } else {
-        addString(strings, keys, attr.value.value);
+      if (attr.value) {
+        addString(strings, keys, '="');
+
+        if (attr.value.type === 'JSXExpressionContainer') {
+          addKey(strings, keys, attr.value.expression);
+        } else {
+          addString(strings, keys, attr.value.value);
+        }
+
+        addString(strings, keys, '"');
       }
-
-      addString(strings, keys, '"');
     });
 
     // Close opening tag
