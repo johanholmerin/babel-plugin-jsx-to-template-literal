@@ -1,6 +1,6 @@
 {
   "name": "babel-plugin-jsx-to-template-literal",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "author": "Johan Holmerin",
   "license": "MIT",
   "repository": {
